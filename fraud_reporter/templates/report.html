@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#b9f3e4">
+<title>NYXIE OS // RAPPORTS DE FRAUDE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --mint:#b9f3e4;
+  --mint2:#c8f4e8;
+  --coral:#ff8066;
+  --navy:#123c66;
+  --cyan:#65e6dc;
+  --ink:#10202b;
+  --cream:#fffdf5;
+  --panel:#f0f1ea;
+  --line:#174e68;
+  --pixel:"Press Start 2P",monospace;
+  --mono:"Space Mono","Courier New",monospace;
+}
+
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  margin:0;display:grid;place-items:center;padding:24px;
+  font-family:var(--mono);color:var(--ink);
+  background:
+    radial-gradient(circle at 12% 20%,rgba(255,255,255,.35) 0 2px,transparent 3px),
+    radial-gradient(circle at 78% 12%,rgba(255,255,255,.3) 0 1px,transparent 2px),
+    var(--mint);
+  background-size:90px 90px,130px 130px,auto;
+}
+
+.window{
+  width:min(780px,100%);
+  background:var(--panel);
+  border:2px solid var(--line);
+  box-shadow:6px 6px 0 var(--line);
+  animation:pop .18s ease-out;
+}
+@keyframes pop{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+
+.titlebar{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  min-height:38px;padding:8px 10px;
+  background:var(--navy);color:#fff;border-bottom:2px solid var(--line);
+}
+.ttl{font:8px var(--pixel);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ttl small{font:7px var(--mono);opacity:.8;margin-left:6px}
+.dots{display:flex;gap:4px;flex:0 0 auto}
+.dots span{
+  width:15px;height:15px;display:grid;place-items:center;
+  border:1px solid #fff;background:#fff;color:var(--navy);
+  font:10px var(--mono);
+}
+
+.win-body{padding:22px 20px 18px}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.brand-mark{
+  width:44px;height:44px;display:grid;place-items:center;
+  border:2px solid var(--line);background:var(--cream);color:var(--navy);
+  box-shadow:3px 3px 0 var(--line);font:14px var(--pixel);
+}
+.brand-copy{font:8px/1.7 var(--pixel);color:var(--navy);text-transform:uppercase}
+.brand-copy small{display:block;font:9px var(--mono);color:#4f7180;letter-spacing:.08em}
+.eyebrow{
+  display:inline-block;border:1px solid var(--line);background:var(--mint2);
+  padding:5px 7px;margin-bottom:16px;font:7px var(--pixel);color:var(--navy);
+  box-shadow:2px 2px 0 var(--line);text-transform:uppercase;
+}
+
+.search{display:flex;gap:10px;align-items:stretch;margin-bottom:20px}
+.search input{
+  flex:1 1 auto;min-width:0;padding:11px 12px;
+  border:2px solid var(--line);background:var(--cream);color:var(--ink);
+  font:13px var(--mono);box-shadow:2px 2px 0 var(--line);outline:none;
+}
+.search input:focus{border-color:var(--coral);box-shadow:2px 2px 0 var(--coral)}
+.search button{
+  flex:0 0 auto;padding:11px 16px;
+  border:2px solid var(--line);background:var(--navy);color:#fff;
+  font:8px var(--pixel);text-transform:uppercase;letter-spacing:.04em;
+  cursor:pointer;box-shadow:3px 3px 0 var(--line);
+  transition:transform .1s,box-shadow .1s,background .1s;
+}
+.search button:hover{background:var(--coral);transform:translate(1px,1px);box-shadow:2px 2px 0 var(--line)}
+.search button:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--line)}
+
+.result-head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  margin-bottom:10px;
+}
+.result-head h2{font:8px var(--pixel);color:var(--navy);margin:0;text-transform:uppercase}
+.result-head span{font:9px var(--mono);color:#4f7180}
+
+.table-wrap{
+  overflow-x:auto;border:2px solid var(--line);background:var(--cream);
+  box-shadow:3px 3px 0 var(--line);
+}
+table{width:100%;border-collapse:collapse;font-size:11px}
+thead{background:var(--navy);color:#fff}
+th{
+  padding:9px 10px;text-align:left;white-space:nowrap;
+  font:7px var(--pixel);text-transform:uppercase;letter-spacing:.03em;
+}
+td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top}
+tbody tr:nth-child(even){background:rgba(185,243,228,.35)}
+tbody tr:hover{background:var(--mint2)}
+td.nowrap{white-space:nowrap}
+
+.empty{
+  margin:0;padding:18px 14px;border:2px dashed var(--line);
+  background:var(--cream);color:#4f7180;font-size:11px;line-height:1.6;
+}
+.error{
+  margin:0 0 16px;padding:10px 11px;
+  border:2px solid #a62b1c;background:var(--cream);color:#a62b1c;
+  box-shadow:2px 2px 0 #a62b1c;font-size:11px;line-height:1.5;
+}
+
+.statusline{
+  display:flex;justify-content:space-between;gap:12px;
+  border-top:2px solid var(--line);padding:8px 10px;
+  background:var(--mint2);color:#3d6273;
+  font:7px var(--pixel);text-transform:uppercase;letter-spacing:.03em;
+}
+.scanlines{
+  position:fixed;inset:0;pointer-events:none;z-index:5;opacity:.05;
+  background:repeating-linear-gradient(0deg,#000 0 1px,transparent 1px 4px);
+}
+
+@media(max-width:560px){
+  body{padding:14px}
+  .win-body{padding:18px 15px 15px}
+  .search{flex-direction:column}
+  .search button{width:100%}
+  .statusline{flex-direction:column;gap:5px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+
+<body>
+<main class="window">
+  <div class="titlebar">
+    <span class="ttl">◆ RAPPORTS DE FRAUDE <small>レポート</small></span>
+    <span class="dots" aria-hidden="true"><span>−</span><span>□</span><span>×</span></span>
+  </div>
+
+  <div class="win-body">
+    <div class="brand">
+      <div class="brand-mark">N</div>
+      <div class="brand-copy">NYXIE OS<small>fraud report terminal</small></div>
+    </div>
+
+    <div class="eyebrow">SESSION // C5 REPORTER</div>
+
+    <form class="search" method="post">
+      <input type="text" name="login" value="{{ login }}" placeholder="Rechercher un login..." aria-label="Login à rechercher" required>
+      <button type="submit">▶ Search</button>
+    </form>
+
+    {% if error %}
+    <p class="error">{{ error }}</p>
+    {% endif %}
+
+    {% if searched %}
+    <div class="result-head">
+      <h2>Résultats // {{ login or "—" }}</h2>
+      <span>{{ rows|length }} rapport(s)</span>
+    </div>
+
+    {% if rows %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Login</th>
+            <th>Tentatives</th>
+            <th>IP</th>
+            <th>Raison</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+          <tr>
+            <td class="nowrap">{{ row.timestamp }}</td>
+            <td>{{ row.login }}</td>
+            <td>{{ row.attempts }}</td>
+            <td>{{ row.ip }}</td>
+            <td>{{ row.reason }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="empty">Aucun rapport pour ce login. Les rapports apparaissent quand un compte est verrouillé après trois tentative(s) échouée(s).</p>
+    {% endif %}
+    {% else %}
+    <p class="empty">Entrez un login pour consulter ses rapports de fraude. Les données proviennent des événements enregistrés par C3 dans MongoDB.</p>
+    {% endif %}
+  </div>
+
+  <div class="statusline">
+    <span>status: report index ready</span>
+    <span>mongo // c4 online</span>
+  </div>
+</main>
+
+<div class="scanlines"></div>
+</body>
+</html>

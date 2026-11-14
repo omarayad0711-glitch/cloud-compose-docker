@@ -1,0 +1,101 @@
+# NYXIE OS // AUTH STACK
+# C1 app -> MySQL, RabbitMQ -> C3 fraud_logger -> MongoDB
+
+services:
+  # C2 // MySQL : comptes + compteur d'échecs
+  db:
+    image: mysql:8.0
+    container_name: auth_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: Authentification
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # broker // RabbitMQ (interface web : http://localhost:15672 guest/guest)
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: auth_rabbitmq
+    restart: unless-stopped
+    ports:
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+
+  # C4 // MongoDB : journal des tentatives de fraude
+  mongo:
+    image: mongo:7
+    container_name: auth_mongo
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # C1 // app d'authentification (producer RabbitMQ)
+  app:
+    build: ./app
+    container_name: auth_app
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: rootpass
+      DB_NAME: Authentification
+      RABBIT_HOST: rabbitmq
+      RABBIT_QUEUE: fraud_events
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  # C3 // traçage des fraudes (consumer RabbitMQ -> MongoDB)
+  fraud_logger:
+    build: ./fraud_logger
+    container_name: auth_fraud_logger
+    restart: unless-stopped
+    environment:
+      RABBIT_HOST: rabbitmq
+      RABBIT_QUEUE: fraud_events
+      MONGO_URI: mongodb://mongo:27017
+      MONGO_DB: fraud
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+
+  # C5 // rapports utilisateur (recherche de fraude par login dans MongoDB)
+  fraud_reporter:
+    build: ./fraud_reporter
+    container_name: auth_fraud_reporter
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    environment:
+      MONGO_URI: mongodb://mongo:27017
+      MONGO_DB: fraud
+      MONGO_COLLECTION: fraud_attempts
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+volumes:
+  db_data:
+  mongo_data:
